@@ -1,0 +1,10 @@
+name: 'Shine Postman'
+description: 'Greet someone and record the time'
+inputs:
+  swaggerFilePath:
+    required: true
+    description: 'Path to the swagger file'
+    default: './api/swagger/swagger.yaml'
+runs:
+  using: 'node16'
+  main: 'build/index.js'
