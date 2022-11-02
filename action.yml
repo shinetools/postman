@@ -1,0 +1,26 @@
+name: 'Shine Postman'
+description: 'Greet someone and record the time'
+inputs:
+  postmanApiKey:
+    required: true
+  postmanCollectionId:
+    required: true
+    description: 'Postman collectionId to update'
+  collectionNameSuffix:
+    required: false
+    description: 'Suffix to append to the collection name. Can be used while migrating an already existing collection.'
+    default: ''
+  excludeOperationIds:
+    required: false
+    description: 'List of operationId to exclude from generated collection'
+    default: |
+      liveness
+      readiness
+      docs
+  swaggerFilePath:
+    required: false
+    description: 'Path to the swagger file'
+    default: './api/swagger/swagger.yaml'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'

@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "noUnusedLocals": false
+  },
+  "extends": "@tsconfig/node16-strictest/tsconfig.json",
+  "include": ["src"]
+}

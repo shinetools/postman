@@ -1,0 +1,191 @@
+swagger: '2.0'
+info:
+  version: 2.0.0
+  title: Github Action Postman Dev
+host: example.com
+tags:
+  - name: GHActionPostmanDev
+x-google-endpoints:
+  - name: example-v2.example.com
+    allowCors: true
+securityDefinitions:
+  google_id_token:
+    authorizationUrl: ''
+    flow: implicit
+    type: oauth2
+    x-google-issuer: 'https://accounts.google.com'
+  api_key:
+    type: apiKey
+    name: key
+    in: query
+basePath: /v2
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+security:
+  - google_id_token: []
+paths:
+  /postman/liveness_check:
+    x-swagger-router-controller: internal
+    get:
+      tags:
+        - Health check
+      description: Health checking liveness endpoint
+      operationId: liveness
+      security: []
+      responses:
+        '200':
+          description: all is well
+  /postman/readiness_check:
+    x-swagger-router-controller: internal
+    get:
+      tags:
+        - Health check
+      description: Health checking readiness endpoint
+      operationId: readiness
+      security: []
+      responses:
+        '200':
+          description: all is well
+  /postman/swagger.json:
+    x-swagger-router-controller: internal
+    get:
+      tags:
+        - Docs
+      description: Get swagger file
+      operationId: docs
+      security:
+        - api_key: []
+      responses:
+        '200':
+          description: swagger file in json format
+  /endpoint:
+    x-swagger-router-controller: endpoints
+    post:
+      tags:
+        - Endpoints
+      description: Create a new endpoint
+      operationId: create
+      parameters:
+        - name: body
+          in: body
+          description: Endpoint data
+          required: true
+          schema:
+            $ref: '#/definitions/CreateEndpointInput'
+      responses:
+        '200':
+          description: Success
+          schema:
+            required:
+              - data
+            properties:
+              data:
+                $ref: '#/definitions/Endpoint'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    get:
+      tags:
+        - Endpoints
+      description: Query and filter a list of endpoints
+      operationId: query
+      parameters:
+        - name: type
+          in: query
+          description: Query endpoints of a given type
+          type: string
+          enum:
+            - TOTO
+            - TATA
+            - TUTU
+        - name: status
+          in: query
+          description: Query endpoints of a given status
+          type: string
+        - name: first
+          in: query
+          description: Number of endpoints to retrieve
+          type: integer
+        - name: after
+          in: query
+          description: Query endpoints after a specific cursor
+          type: string
+      responses:
+        '200':
+          description: Success
+          schema:
+            required:
+              - data
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/Endpoint'
+        default:
+          description: Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+definitions:
+  Endpoint:
+    type: object
+    additionalProperties: false
+    properties:
+      endpointId:
+        type: string
+      createdAt:
+        description: Timestamp at which the entity was created in DB
+        type: string
+      status:
+        type: string
+        enum:
+          - PENDING
+          - TO_MODIFY
+          - MODIFIED
+          - PAUSED
+          - VALIDATED
+          - REFUSED
+      type:
+        type: string
+        enum:
+          - TOTO
+          - TATA
+          - TUTU
+      updatedAt:
+        description: Timestamp at which the entity was last updated in DB
+        type: string
+  CreateEndpointInput:
+    type: object
+    additionalProperties: false
+    required:
+      - type
+      - status
+    properties:
+      status:
+        type: string
+        enum:
+          - PENDING
+          - TO_MODIFY
+          - MODIFIED
+          - PAUSED
+          - VALIDATED
+          - REFUSED
+      type:
+        type: string
+        enum:
+          - ONBOARDING_REVIEW
+          - ONBOARDING_REVIEW_SHINE_START
+          - ONBOARDING_REVIEW_CAPITAL_DEPOSIT
+  ErrorResponse:
+    required:
+      - message
+      - status
+    properties:
+      message:
+        type: string
+      status:
+        type: string

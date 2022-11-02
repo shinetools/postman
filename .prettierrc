@@ -1,0 +1,5 @@
+{
+  "jsdocSeparateTagGroups": true,
+  "singleQuote": true,
+  "trailingComma": "all"
+}
